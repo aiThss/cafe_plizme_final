@@ -20,10 +20,7 @@
             background-color: Canvas; 
             color: CanvasText; 
             position: relative;
-            /* Thêm opacity và transition cho hiệu ứng chuyển trang */
-            opacity: 0;
-            transform: translateY(20px);
-            transition: background-color 0.4s ease, opacity 0.5s ease, transform 0.5s ease;
+            transition: background-color 0.4s ease;
             font-family: sans-serif;
         }
 
@@ -110,7 +107,7 @@
 
         nav ul { display: flex; justify-content: center; list-style: none; margin: 0; padding: 0; }
         /* Thêm CSS cho thẻ a để không bị gạch chân */
-        nav li a { text-decoration: none; color: inherit; display: block; width: 100%; height: 100%; }
+        nav li a { text-decoration: none; color: inherit; display: block; }
 
         /* --- 4. Thực đơn hàng ngang --- */
         .menu-grid {
@@ -177,25 +174,15 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); /* Đổ bóng giúp nổi lên */
         }
 
-        /* Class hỗ trợ JS cho hiệu ứng chuyển trang */
-        body.fade-in {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* --- RESPONSIVE MOBILE (Điện thoại) --- */
+        /* --- RESPONSIVE MOBILE --- */
         @media (max-width: 768px) {
-            /* Menu tự động xuống dòng và nhỏ lại */
             nav ul { flex-wrap: wrap; gap: 5px; }
             nav li { margin: 5px 10px; font-size: 0.9rem; }
             
-            /* Chữ trên banner nhỏ lại */
             .banner-text h1 { font-size: 1.8rem; }
             .banner-text p { font-size: 1.4rem; }
             
-            /* Danh sách món ăn tự động xuống dòng */
             .menu-grid { flex-wrap: wrap; padding: 20px; gap: 20px; }
-            
             footer { height: 400px; background-size: cover; }
         }
     </style>
@@ -278,24 +265,6 @@
                 localStorage.setItem('theme', 'dark');
                 updateThemeDisplay(true);
             }
-        });
-
-        // --- HIỆU ỨNG CHUYỂN TRANG MƯỢT MÀ ---
-        document.addEventListener('DOMContentLoaded', () => {
-            document.body.classList.add('fade-in');
-        });
-
-        const navLinks = document.querySelectorAll('nav a');
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                const href = link.getAttribute('href');
-                // Chỉ áp dụng cho các link nội bộ
-                if (href && (href.startsWith('/') || href.includes('.html'))) {
-                    e.preventDefault(); // Chặn hành vi chuyển trang mặc định
-                    document.body.classList.remove('fade-in'); // Bắt đầu làm mờ trang hiện tại
-                    setTimeout(() => { window.location.href = href; }, 300); // Chờ hiệu ứng mờ hoàn tất rồi mới chuyển trang
-                }
-            });
         });
     </script>
 </body>
