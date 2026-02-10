@@ -390,22 +390,16 @@
 
         // --- WELCOME MODAL LOGIC ---
         window.addEventListener('load', () => {
-            // Kiểm tra sessionStorage xem đã hiện popup chưa
-            if (!sessionStorage.getItem('welcomeShown')) {
-                const modal = document.getElementById('welcome-modal');
-                const closeBtn = document.getElementById('close-modal-btn');
-                
-                setTimeout(() => { modal.classList.add('show'); }, 500);
-                
-                closeBtn.addEventListener('click', () => { modal.classList.remove('show'); });
-                modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
-
-                // Đánh dấu đã hiện popup trong phiên này
-                sessionStorage.setItem('welcomeShown', 'true');
-
-                // --- KÍCH HOẠT HIỆU ỨNG TẾT (HOA RƠI) ---
-                startTetEffects();
-            }
+            const modal = document.getElementById('welcome-modal');
+            const closeBtn = document.getElementById('close-modal-btn');
+            
+            setTimeout(() => { modal.classList.add('show'); }, 500);
+            
+            closeBtn.addEventListener('click', () => { modal.classList.remove('show'); });
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
+            
+            // --- KÍCH HOẠT HIỆU ỨNG TẾT (HOA RƠI) ---
+            startTetEffects();
         });
 
         function startTetEffects() {
