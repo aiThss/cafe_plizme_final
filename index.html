@@ -283,6 +283,12 @@
             margin-top: 20px; /* Tạo khoảng cách với chữ */
         }
         #close-modal-btn:hover { transform: scale(1.05); }
+
+        /* --- FIREWORKS CANVAS --- */
+        #fireworks-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 10000; /* Nằm trên cả modal */
+        }
     </style>
 </head>
 <body>
@@ -301,6 +307,9 @@
             </div>
         </nav>
     </header>
+
+    <!-- Canvas cho hiệu ứng pháo hoa -->
+    <canvas id="fireworks-canvas"></canvas>
 
     <!-- WELCOME MODAL -->
     <div id="welcome-modal" class="modal-overlay">
@@ -381,13 +390,105 @@
 
         // --- WELCOME MODAL LOGIC ---
         window.addEventListener('load', () => {
-            const modal = document.getElementById('welcome-modal');
-            const closeBtn = document.getElementById('close-modal-btn');
-            setTimeout(() => { modal.classList.add('show'); }, 500);
-            
-            closeBtn.addEventListener('click', () => { modal.classList.remove('show'); });
-            modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
+            // Kiểm tra sessionStorage xem đã hiện popup chưa
+            if (!sessionStorage.getItem('welcomeShown')) {
+                const modal = document.getElementById('welcome-modal');
+                const closeBtn = document.getElementById('close-modal-btn');
+                
+                setTimeout(() => { modal.classList.add('show'); }, 500);
+                
+                closeBtn.addEventListener('click', () => { modal.classList.remove('show'); });
+                modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
+
+                // Đánh dấu đã hiện popup trong phiên này
+                sessionStorage.setItem('welcomeShown', 'true');
+
+                // --- KÍCH HOẠT HIỆU ỨNG TẾT (HOA RƠI) ---
+                startTetEffects();
+            }
         });
+
+        function startTetEffects() {
+            const canvas = document.getElementById('fireworks-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            let flowers = [];
+            // Màu vàng (Mai) và Hồng (Đào)
+            const colors = ['#FFD700', '#FF69B4', '#FFB7C5', '#FFD700']; 
+            
+            function createFlower() {
+                return {
+                    x: Math.random() * canvas.width,
+                    y: -20,
+                    size: Math.random() * 8 + 5, // Kích thước hoa
+                    speedY: Math.random() * 2 + 1.5,
+                    speedX: (Math.random() - 0.5) * 1.5,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: (Math.random() - 0.5) * 2,
+                    color: colors[Math.floor(Math.random() * colors.length)]
+                };
+            }
+
+            let isRunning = true;
+
+            function drawFlowerShape(x, y, size, color, rotation) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(rotation * Math.PI / 180);
+                ctx.fillStyle = color;
+                
+                // Vẽ 5 cánh hoa
+                for (let i = 0; i < 5; i++) {
+                    ctx.beginPath();
+                    ctx.ellipse(0, size, size/2.5, size, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.rotate((Math.PI * 2) / 5);
+                }
+                
+                // Vẽ nhụy
+                ctx.beginPath();
+                ctx.arc(0, 0, size/1.5, 0, Math.PI * 2);
+                ctx.fillStyle = '#FFFACD';
+                ctx.fill();
+                
+                ctx.restore();
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                if (isRunning && Math.random() < 0.15) { // Tần suất sinh hoa
+                    flowers.push(createFlower());
+                }
+
+                flowers.forEach((f, index) => {
+                    f.y += f.speedY;
+                    f.x += f.speedX + Math.sin(f.y * 0.01) * 0.5; // Rơi lượn sóng
+                    f.rotation += f.rotationSpeed;
+                    
+                    drawFlowerShape(f.x, f.y, f.size, f.color, f.rotation);
+
+                    if (f.y > canvas.height) flowers.splice(index, 1);
+                });
+
+                if (isRunning || flowers.length > 0) {
+                    requestAnimationFrame(animate);
+                } else {
+                    canvas.remove();
+                }
+            }
+            
+            animate();
+
+            // Dừng sau 5 giây
+            setTimeout(() => { 
+                isRunning = false;
+                canvas.style.transition = 'opacity 1s';
+                canvas.style.opacity = '0';
+            }, 5000);
+        }
 
         const navLinks = document.querySelectorAll('nav a');
         navLinks.forEach(link => {
