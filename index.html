@@ -22,7 +22,8 @@
             position: relative;
             /* Thêm opacity và transition cho hiệu ứng chuyển trang */
             opacity: 0;
-            transition: background-color 0.4s ease, opacity 0.1s ease-in-out;
+            transform: translateY(20px);
+            transition: background-color 0.4s ease, opacity 0.5s ease, transform 0.5s ease;
             font-family: sans-serif;
         }
 
@@ -179,6 +180,7 @@
         /* Class hỗ trợ JS cho hiệu ứng chuyển trang */
         body.fade-in {
             opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
@@ -275,7 +277,7 @@
                 if (href && (href.startsWith('/') || href.includes('.html'))) {
                     e.preventDefault(); // Chặn hành vi chuyển trang mặc định
                     document.body.classList.remove('fade-in'); // Bắt đầu làm mờ trang hiện tại
-                    setTimeout(() => { window.location.href = href; }, 100); // Chờ hiệu ứng mờ hoàn tất rồi mới chuyển trang
+                    setTimeout(() => { window.location.href = href; }, 300); // Chờ hiệu ứng mờ hoàn tất rồi mới chuyển trang
                 }
             });
         });
