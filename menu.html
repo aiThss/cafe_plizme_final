@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Thực đơn - Cafe Plizme</title>
+
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playwrite+IN+Guides&display=swap" rel="stylesheet">
+      <style>
+        :root {
+            color-scheme: light dark;
+        }
+        body {
+            margin: 0; padding: 0;
+            background-color: Canvas; color: CanvasText;
+            transition: background-color 0.4s ease;
+            font-family: sans-serif;
+        }
+        header {
+            background-color: rgba(165, 220, 236, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 20px 0;
+            position: sticky; top: 0; z-index: 1000;
+        }
+        nav ul { display: flex; justify-content: center; list-style: none; margin: 0; padding: 0; }
+        nav li { margin: 0 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.4s; }
+        nav li:hover { transform: translateY(-3px); color: #6ac5df; }
+        
+        nav li a { text-decoration: none; color: inherit; display: block; }
+        
+        .menu-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 40px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+        }
+
+        .menu-item { padding: 25px; width: 220px; text-align: center; transition: 0.4s; color: #004d26; }
+        .menu-item:hover { transform: translateY(-15px); background: rgba(255, 255, 255, 0.3); }
+        .menu-img { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; }
+
+        footer { 
+            background: url('./cf_img/cf.png') no-repeat center center; 
+            background-size: 100% 100%; /* Ép ảnh dãn ra full khung */
+            color: white; 
+            text-align: center; 
+            padding: 40px 0; 
+            margin-top: 60px;
+            height: 600px; /* Tăng chiều cao để hiển thị nhiều ảnh hơn */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }   
+
+        /* Thêm đoạn này để màu nền Canvas tự động đổi theo chế độ */
+        body.dark-mode { color-scheme: dark; }
+        body.light-mode { color-scheme: light; }
+
+        body.dark-mode header {background-color: rgba(0, 40, 50, 0.7); }
+        body.dark-mode .menu-item { color: #b0e0c0; }   
+        body.light-mode .menu-item { color: #004d26; }
+
+        /* Hiệu ứng hover cho Dark Mode: Phát sáng trắng */
+        body.dark-mode .menu-item:hover {
+            border-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+        }
+
+        /* FIX: Thêm viền xám cho các ô menu khi ở chế độ sáng để không bị chìm vào nền */
+        body.light-mode .glass-panel {
+            background: rgba(0, 0, 0, 0.02); /* Nền hơi xám cực nhẹ */
+            border: 1px solid rgba(0, 0, 0, 0.2); /* Viền xám mờ bo quanh */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+        }
+
+        /* Hiệu ứng hover cho Light Mode: Phát sáng xám */
+        body.light-mode .menu-item:hover {
+            border-color: rgba(100, 100, 100, 0.8);
+            box-shadow: 0 0 20px rgba(100, 100, 100, 0.5);
+        }
+
+        .theme-toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem; }
+      </style>
+
+</head>
+<body>
+    
+    <header>
+        <nav>
+            <ul>
+                <li><a href="cafe_plizme.html">Trang chủ</a></li>
+                <!--trang hien tai-->
+                <li style="color: #6ac5df; border-bottom: 2px solid #6ac5df;">Thực đơn</li>
+                <li>Tin tức</li>
+                <li>Khuyến mãi</li>
+                <li><button id="theme-toggle" class="theme-toggle-btn" title="Chuyển đổi chế độ sáng/tối">🌗</button></li>                    
+            </ul>
+        </nav>
+    </header>
+
+    <h1 style="text-align: center; margin-top: 40px; font-family: 'Dancing Script', font-size: 3rem;">Thực đơn hôm nay</h1>
+    <div class="menu-grid">
+        <div class="menu-item glass-panel">
+            <img src="./cf_img/cf (1).png" alt="Coffee" class="menu-img">
+            <h3>Coffee</h3>
+            <p>siêu đắng</p>
+        </div>
+        <div class="menu-item glass-panel">
+            <img src="./cf_img/cf (2).png" alt="Latte" class="menu-img">
+            <h3>Latte</h3>
+            <p>bé 3</p>
+        </div>
+        <div class="menu-item glass-panel">
+            <img src="./cf_img/cf (3).jpg" alt="Cappuccino" class="menu-img">
+            <h3>Cappuccino</h3>
+            <p>Coppuchina</p>
+        </div>
+        <div class="menu-item glass-panel">
+            <img src="./cf_img/cf (4).jpg" alt="Espresso" class="menu-img">
+            <h3>Espresso</h3>
+            <p>ốt sô pét se</p>
+        </div>
+        <div class="menu-item glass-panel">
+            <img src="./cf_img/cf (5).jpg" alt="Macchiato" class="menu-img">
+            <h3>Macchiato</h3>
+            <p>1 2 3 ly</p>
+        </div>
+        <div class="menu-item glass-panel">
+            <img src="./cf_img/cf (6).jpg" alt="Mocha" class="menu-img">
+            <h3>Mocha</h3>
+            <p>macho</p>
+        </div>
+        <div class="menu-item glass-panel">
+            <img src="./cf_img/cf (7).jpg" alt="Americano" class="menu-img">
+            <h3>Americano</h3>
+            <p>mý</p>
+        </div>
+        <div class="menu-item glass-panel">
+            <img src="./cf_img/cf (8).jpg" alt="Món mới" class="menu-img">
+            <h3>Món mới</h3>
+            <p></p>
+        </div>
+    </div>
+
+    <footer>
+        <p>Bản quyền thuộc về aiThs &copy; 2026</p> 
+        <p>Bản quyền thuộc về ❤️ 𝘢𝘪𝘛𝘩𝘴 &copy; 2026</p> 
+    </footer>
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        // Kiểm tra trạng thái đã lưu hoặc mặc định hệ thống
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+            body.classList.add('dark-mode');
+            toggleBtn.textContent = '☀️';
+        } else {
+            body.classList.add('light-mode');
+            toggleBtn.textContent = '🌙';
+        }   
+
+        toggleBtn.addEventListener('click', () => {
+            const isDark = body.classList.contains('dark-mode');
+            body.classList.replace(isDark ? 'dark-mode' : 'light-mode', isDark ? 'light-mode' : 'dark-mode');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            toggleBtn.textContent = isDark ? '🌙' : '☀️';
+        });
+    </script>
+</body>
+</html>

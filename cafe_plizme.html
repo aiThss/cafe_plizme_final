@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playwrite+IN+Guides&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe Plizme - Món quà tặng em</title>
+    <style>
+        /* --- 1. Thiết lập màu nền theo hệ thống (Dark/Light Mode) --- */
+        :root {
+            color-scheme: light dark; /* Tự động nhận diện chế độ sáng/tối */
+        }
+        
+        body {
+            margin: 0; padding: 0;
+            overflow-x: hidden;
+            /* Canvas là màu nền mặc định, CanvasText là màu chữ mặc định của máy */
+            background-color: Canvas; 
+            color: CanvasText; 
+            position: relative;
+            transition: background-color 0.4s ease;
+        }
+
+        /* --- 2. Banner trượt "vuốt vuốt" kiểu Phúc Long --- */
+        .banner-slider {
+            width: 100%;
+            height: 80vh; /* Chiều cao banner */
+            overflow: hidden;
+        }
+
+        .banner-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory; /* "Khóa" ảnh khi vuốt sang */
+            scroll-behavior: smooth;
+            height: 100%;
+        }
+
+        .banner-container::-webkit-scrollbar { display: none; } /* Ẩn thanh cuộn */
+
+        .banner-slide {
+            min-width: 100%;
+            height: 100%;
+            scroll-snap-align: start;
+            position: relative;
+        }
+
+        .banner-slide img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        .banner-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            /* FIX LỖI: Căn giữa văn bản tại đây */
+            text-align: center; 
+            color: white;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
+            width: 100%;
+        }
+
+        .banner-text h1 { font-size: 3rem; margin-bottom: 10px; }
+        .banner-text p { font-family: "Dancing Script", serif; font-size: 2rem; }
+
+        /* --- 3. Header Liquid Glass --- */
+        header {
+            background-color: rgba(165, 220, 236, 0.5); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 20px 0;
+            position: sticky; top: 0; z-index: 1000;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            header {
+                background-color: rgba(0, 40, 50, 0.7);
+            }
+        }
+
+        nav li {
+            margin: 0 25px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            color: Canvastext;
+
+            transition: 0.4s;
+        }
+        
+        nav li:hover {
+            transform: translateY(-3px);
+
+            color: aquamarine
+        }
+        
+        nav ul { display: flex; justify-content: center; list-style: none; margin: 0; padding: 0; }
+        nav li { margin: 0 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.4s; }
+        nav li:hover { transform: translateY(-3px); color: #6ac5df; }
+        /* Thêm CSS cho thẻ a để không bị gạch chân */
+        nav li a { text-decoration: none; color: inherit; display: block; width: 100%; height: 100%; }
+
+        /* --- 4. Thực đơn hàng ngang --- */
+        .menu-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 40px;
+            flex-wrap: nowrap; /* Ép nằm ngang */
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+        }
+
+        .menu-item { padding: 25px; width: 220px; text-align: center; transition: 0.4s; color: #004d26; }
+        .menu-item:hover { transform: translateY(-15px); background: rgba(255, 255, 255, 0.3); }
+        .menu-img { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; }
+
+        footer { 
+            background: url('./cf_img/cf.png') no-repeat center center; 
+            background-size: 100% 100%; /* Ép ảnh dãn ra full khung */
+            color: white; 
+            text-align: center; 
+            margin-top: 60px;
+            height: 600px; /* Tăng chiều cao để hiển thị nhiều ảnh hơn */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* --- 5. Nút chuyển đổi giao diện (Dark/Light Toggle) --- */
+        .theme-toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: inherit;
+            padding: 0;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        .theme-toggle-btn:hover { transform: rotate(20deg) scale(1.1); }
+
+        /* Class hỗ trợ JS toggle - Ghi đè color-scheme */
+        body.dark-mode { color-scheme: dark; }
+        body.light-mode { color-scheme: light; }
+
+        /* Override màu sắc cụ thể khi có class dark-mode */
+        body.dark-mode header { background-color: rgba(0, 40, 50, 0.7); }
+        body.dark-mode .menu-item { color: #b0e0c0; } /* Màu chữ sáng hơn cho menu trong nền tối */
+        
+        body.light-mode header { background-color: rgba(165, 220, 236, 0.5); }
+        body.light-mode .menu-item { color: #004d26; }
+
+        /* FIX: Làm nổi bật các ô menu khi ở nền trắng (Light Mode) */
+        body.light-mode .glass-panel {
+            background: rgba(165, 220, 236, 0.2); /* Thêm chút màu xanh nhạt */
+            border: 1px solid rgba(0, 0, 0, 0.1);   /* Viền tối nhẹ để tách biệt */
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); /* Đổ bóng giúp nổi lên */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li>Trang chủ</li>
+                <li><a href="menu.html">Thực đơn</a></li>
+                <li>Tin tức</li>
+                <li>Khuyến mãi</li>
+                <li><button id="theme-toggle" class="theme-toggle-btn" title="Chuyển đổi chế độ sáng/tối">🌗</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="banner-slider">
+        <div class="banner-container">
+            <div class="banner-slide">
+                <img src="./cf_img/cf (1).jpg" alt="Banner 1">
+                <div class="banner-text">
+                    <h1>Hương vị tình yêu trong từng tách Coffee</h1>
+                    <p>Dành riêng tặng em</p>
+                </div>
+            </div>
+            <div class="banner-slide">
+                <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1000" alt="Banner 2">
+                <div class="banner-text">
+                    <h1>Đậm đà từng giọt</h1>
+                    <p>Plizme Cafe & Comfort</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Bản quyền thuộc về ❤️ 𝘢𝘪𝘛𝘩𝘴 &copy; 2026</p>
+        <p>Made with ❤️ 𝘢𝘪𝘛𝘩𝘴</p>
+    </footer>
+
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        // Kiểm tra trạng thái đã lưu hoặc mặc định hệ thống
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+            body.classList.add('dark-mode');
+            toggleBtn.textContent = '☀️'; 
+        } else {
+            body.classList.add('light-mode');
+            toggleBtn.textContent = '🌙';
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            const isDark = body.classList.contains('dark-mode');
+            body.classList.replace(isDark ? 'dark-mode' : 'light-mode', isDark ? 'light-mode' : 'dark-mode');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            toggleBtn.textContent = isDark ? '🌙' : '☀️';
+        });
+    </script>
+</body>
+</html>
