@@ -26,7 +26,12 @@
             padding: 20px 0;
             position: sticky; top: 0; z-index: 1000;
         }
+        nav { position: relative; } /* Để căn chỉnh các nút tuyệt đối */
         nav ul { display: flex; justify-content: center; list-style: none; margin: 0; padding: 0; }
+        .theme-switch-container {
+            position: absolute; right: 25px; top: 50%; transform: translateY(-50%);
+            display: flex; align-items: center;
+        }
         nav li { 
             margin: 0 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; 
             transition: color 0.3s ease; position: relative; 
@@ -61,7 +66,7 @@
         }
 
         .menu-item { padding: 25px; width: 220px; text-align: center; transition: 0.4s; color: #004d26; }
-        .menu-item:hover { transform: translateY(-15px); background: rgba(255, 255, 255, 0.3); }
+        .menu-item:hover, .menu-item:active { transform: translateY(-15px); background: rgba(255, 255, 255, 0.3); }
         .menu-img { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; }
 
         footer { 
@@ -86,7 +91,7 @@
         body.light-mode .menu-item { color: #004d26; }
 
         /* Hiệu ứng hover cho Dark Mode: Phát sáng trắng */
-        body.dark-mode .menu-item:hover {
+        body.dark-mode .menu-item:hover, body.dark-mode .menu-item:active {
             border-color: rgba(255, 255, 255, 0.9);
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
         }
@@ -99,7 +104,7 @@
         }
 
         /* Hiệu ứng hover cho Light Mode: Phát sáng xám */
-        body.light-mode .menu-item:hover {
+        body.light-mode .menu-item:hover, body.light-mode .menu-item:active {
             border-color: rgba(100, 100, 100, 0.8);
             box-shadow: 0 0 20px rgba(100, 100, 100, 0.5);
         }
@@ -120,13 +125,48 @@
         }
 
         /* --- RESPONSIVE MOBILE --- */
+        .menu-toggle { display: none; }
+
         @media (max-width: 768px) {
-            nav ul { flex-wrap: wrap; gap: 5px; }
-            nav li { margin: 5px 10px; font-size: 0.9rem; }
+            .menu-toggle {
+                display: flex; justify-content: center; align-items: center;
+                width: 45px; height: 45px; border-radius: 50%;
+                font-size: 1.5rem; padding: 0;
+                background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: inherit; cursor: pointer;
+                backdrop-filter: blur(5px);
+                position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+                z-index: 1100;
+            }
+
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute; top: 100%; left: 0; width: 100%;
+                background-color: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(20px);
+                padding: 0;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                border-top: 1px solid rgba(0,0,0,0.05);
+            }
+
+            nav ul.active { display: flex; animation: slideDown 0.3s ease forwards; }
+            @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+            nav li { margin: 0; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); width: 100%; box-sizing: border-box; display: flex; justify-content: center; align-items: center; }
             
-            .menu-grid { padding: 20px; gap: 20px; }
-            /* Trên mobile, thẻ menu có thể nhỏ hơn chút hoặc giữ nguyên để cuộn dọc */
-            footer { height: 400px; background-size: cover; }
+            body.dark-mode nav ul { background-color: rgba(0, 40, 50, 0.98); border-top: 1px solid rgba(255,255,255,0.1); }
+            body.dark-mode nav li { border-bottom: 1px solid rgba(255,255,255,0.1); }
+            
+            .theme-switch-container { right: 20px; }
+            #theme-note { display: none; } /* Ẩn chú thích trên mobile cho gọn */
+
+            /* Menu 2 cột trên mobile */
+            .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); padding: 10px; gap: 10px; }
+            .menu-item { width: auto; padding: 10px; }
+            .menu-img { height: 120px; }
+
+            /* Footer hiển thị full ảnh, giảm chiều cao để đỡ bị méo */
+            footer { height: 250px; background-size: 100% 100%; }
         }
       </style>
 
@@ -135,17 +175,18 @@
     
     <header>
         <nav>
-            <ul>
+            <button class="menu-toggle" id="mobile-menu-btn">☰</button>
+            <ul id="nav-list">
                 <li><a href="index.html">Trang chủ</a></li>
                 <!--trang hien tai-->
                 <li class="active">Thực đơn</li>
                 <li><a href="news.html">Tin tức</a></li>
                 <li><a href="feedback.html">Hòm góp ý</a></li>
-                <li style="display: flex; align-items: center;">
-                    <button id="theme-toggle" class="theme-toggle-btn" title="Chuyển đổi chế độ sáng/tối">🌗</button>
-                    <span id="theme-note" style="font-size: 12px; margin-left: 10px; text-transform: none; font-weight: normal; font-style: italic;"></span>
-                </li>                    
             </ul>
+            <div class="theme-switch-container">
+                <button id="theme-toggle" class="theme-toggle-btn" title="Chuyển đổi chế độ sáng/tối">🌗</button>
+                <span id="theme-note" style="font-size: 12px; margin-left: 10px; text-transform: none; font-weight: normal; font-style: italic;"></span>
+            </div>
         </nav>
     </header>
 
@@ -252,6 +293,13 @@
                     setTimeout(() => { window.location.href = href; }, 300);
                 }
             });
+        });
+
+        // --- XỬ LÝ MENU MOBILE ---
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const navList = document.getElementById('nav-list');
+        mobileBtn.addEventListener('click', () => {
+            navList.classList.toggle('active');
         });
     </script>
 </body>

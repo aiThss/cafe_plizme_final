@@ -85,6 +85,12 @@
             }
         }
 
+        nav { position: relative; }
+        .theme-switch-container {
+            position: absolute; right: 25px; top: 50%; transform: translateY(-50%);
+            display: flex; align-items: center;
+        }
+
         nav li {
             margin: 0 25px;
             font-weight: bold;
@@ -184,37 +190,125 @@
         }
 
         /* --- RESPONSIVE MOBILE (Điện thoại) --- */
+        .menu-toggle { display: none; } /* Ẩn nút menu trên máy tính */
+
         @media (max-width: 768px) {
-            /* Menu tự động xuống dòng và nhỏ lại */
-            nav ul { flex-wrap: wrap; gap: 5px; }
-            nav li { margin: 5px 10px; font-size: 0.9rem; }
+            /* Hiện nút menu hamburger */
+            .menu-toggle {
+                display: flex; justify-content: center; align-items: center;
+                width: 45px; height: 45px; border-radius: 50%;
+                font-size: 1.5rem; padding: 0;
+                background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: inherit; cursor: pointer;
+                backdrop-filter: blur(5px);
+                position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+                z-index: 1100;
+            }
+
+            /* Ẩn menu mặc định và style lại thành dạng danh sách dọc */
+            nav ul {
+                display: none; /* Ẩn đi */
+                flex-direction: column;
+                position: absolute; top: 100%; left: 0; width: 100%;
+                background-color: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(20px);
+                padding: 0;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                border-top: 1px solid rgba(0,0,0,0.05);
+            }
+
+            /* Class để hiện menu khi bấm nút */
+            nav ul.active { display: flex; animation: slideDown 0.3s ease forwards; }
+            @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+            nav li {
+                margin: 0; padding: 20px;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+                width: 100%; box-sizing: border-box;
+                display: flex; justify-content: center; align-items: center; /* Căn giữa nội dung */
+            }
             
+            /* Dark mode cho menu mobile */
+            body.dark-mode nav ul { background-color: rgba(0, 40, 50, 0.98); border-top: 1px solid rgba(255,255,255,0.1); }
+            body.dark-mode nav li { border-bottom: 1px solid rgba(255,255,255,0.1); }
+
+            .theme-switch-container { right: 20px; }
+            #theme-note { display: none; }
+
             /* Chữ trên banner nhỏ lại */
             .banner-text h1 { font-size: 1.8rem; }
             .banner-text p { font-size: 1.4rem; }
             
             /* Danh sách món ăn tự động xuống dòng */
-            .menu-grid { flex-wrap: wrap; padding: 20px; gap: 20px; }
+            .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); padding: 10px; gap: 10px; }
             
-            footer { height: 400px; background-size: cover; }
+            footer { height: 250px; background-size: 100% 100%; }
         }
+
+        /* --- WELCOME MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+        
+        .modal-content {
+            /* Thay đổi: Dùng ảnh làm nền full */
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('./cf_img/cf.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 20px; border-radius: 20px;
+            text-align: center; width: 300px;
+            height: 400px; /* Tăng chiều cao */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        /* Không cần đổi màu nền popup trong dark mode nữa */
+        
+        .welcome-text {
+            font-family: 'Dancing Script', serif; font-size: 2rem;
+            /* Thay đổi: Màu chữ giống menu và thêm bóng đổ */
+            color: #6ac5df;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.7);
+        }
+        
+        #close-modal-btn {
+            background-color: #6ac5df; color: white; border: none;
+            padding: 8px 25px; border-radius: 20px; font-weight: bold;
+            cursor: pointer; font-size: 1rem; transition: transform 0.2s;
+            margin-top: 20px; /* Tạo khoảng cách với chữ */
+        }
+        #close-modal-btn:hover { transform: scale(1.05); }
     </style>
 </head>
 <body>
     <header>
         <nav>
-            <ul>
+            <button class="menu-toggle" id="mobile-menu-btn">☰</button>
+            <ul id="nav-list">
                 <li class="active">Trang chủ</li>
                 <li><a href="menu.html">Thực đơn</a></li>
                 <li><a href="news.html">Tin tức</a></li>
                 <li><a href="feedback.html">Hòm góp ý</a></li>
-                <li style="display: flex; align-items: center;">
-                    <button id="theme-toggle" class="theme-toggle-btn" title="Chuyển đổi chế độ sáng/tối">🌗</button>
-                    <span id="theme-note" style="font-size: 12px; margin-left: 10px; text-transform: none; font-weight: normal; font-style: italic;"></span>
-                </li>
             </ul>
+            <div class="theme-switch-container">
+                <button id="theme-toggle" class="theme-toggle-btn" title="Chuyển đổi chế độ sáng/tối">🌗</button>
+                <span id="theme-note" style="font-size: 12px; margin-left: 10px; text-transform: none; font-weight: normal; font-style: italic;"></span>
+            </div>
         </nav>
     </header>
+
+    <!-- WELCOME MODAL -->
+    <div id="welcome-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="welcome-text">Chào mừng đến với Cafe-Plizme</h2>
+            <button id="close-modal-btn">Đóng</button>
+        </div>
+    </div>
 
     <section class="banner-slider">
         <div class="banner-container">
@@ -285,6 +379,16 @@
             document.body.classList.add('fade-in');
         });
 
+        // --- WELCOME MODAL LOGIC ---
+        window.addEventListener('load', () => {
+            const modal = document.getElementById('welcome-modal');
+            const closeBtn = document.getElementById('close-modal-btn');
+            setTimeout(() => { modal.classList.add('show'); }, 500);
+            
+            closeBtn.addEventListener('click', () => { modal.classList.remove('show'); });
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
+        });
+
         const navLinks = document.querySelectorAll('nav a');
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
@@ -296,6 +400,13 @@
                     setTimeout(() => { window.location.href = href; }, 300); // Chờ hiệu ứng mờ hoàn tất rồi mới chuyển trang
                 }
             });
+        });
+
+        // --- XỬ LÝ MENU MOBILE ---
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const navList = document.getElementById('nav-list');
+        mobileBtn.addEventListener('click', () => {
+            navList.classList.toggle('active');
         });
     </script>
 </body>
