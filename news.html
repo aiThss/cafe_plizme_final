@@ -1,0 +1,296 @@
+<!-- d:\COFFEE_PLIZME\cafe_project.html\news.html -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tin tức - Cafe Plizme</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playwrite+IN+Guides&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS GỐC ĐỒNG BỘ VỚI TRANG CHỦ --- */
+        :root { color-scheme: light dark; }
+        body {
+            margin: 0; padding: 0;
+            background-color: Canvas; color: CanvasText;
+            font-family: sans-serif;
+            opacity: 0;
+            transition: background-color 0.4s ease, opacity 0.1s ease-in-out;
+        }
+        header {
+            background-color: rgba(165, 220, 236, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 20px 0;
+            position: sticky; top: 0; z-index: 1000;
+        }
+        nav ul { display: flex; justify-content: center; list-style: none; margin: 0; padding: 0; }
+        nav li { 
+            margin: 0 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; 
+            transition: color 0.3s ease; position: relative; 
+        }
+        nav li:hover { color: #6ac5df; }
+        
+        /* Hiệu ứng gạch chân mở rộng từ giữa */
+        nav li::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -5px; left: 50%; background-color: #6ac5df;
+            transition: all 0.3s ease;
+        }
+        nav li:hover::after, nav li.active::after { width: 100%; left: 0; }
+        nav li.active { color: #6ac5df; }
+        
+        nav li a { text-decoration: none; color: inherit; display: block; }
+
+        /* --- CSS RIÊNG CHO TRANG TIN TỨC --- */
+        .news-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .news-card {
+            display: flex;
+            flex-direction: row; /* Ảnh bên trái, chữ bên phải */
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .news-img {
+            width: 40%;
+            object-fit: cover;
+            min-height: 250px;
+        }
+
+        .news-content {
+            padding: 30px;
+            width: 60%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .news-date {
+            color: #6ac5df;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .news-title {
+            font-family: 'Dancing Script', serif;
+            font-size: 2rem;
+            margin: 0 0 15px 0;
+            color: #004d26;
+        }
+
+        .news-desc {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .read-more-btn {
+            align-self: flex-start;
+            padding: 10px 25px;
+            border: 2px solid #6ac5df;
+            color: #6ac5df;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .read-more-btn:hover {
+            background-color: #6ac5df;
+            color: white;
+        }
+
+        /* Responsive cho mobile */
+        @media (max-width: 768px) {
+            .news-card { flex-direction: column; }
+            .news-img { width: 100%; height: 200px; }
+            .news-content { width: 100%; padding: 20px; }
+        }
+
+        /* --- FOOTER --- */
+        footer { 
+            background: url('./cf_img/cf.png') no-repeat center center; 
+            background-size: 100% 100%; 
+            color: black; 
+            text-align: center; 
+            margin-top: 60px;
+            height: 600px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; 
+            padding-bottom: 50px; 
+        }   
+
+        /* --- DARK MODE --- */
+        body.dark-mode { color-scheme: dark; }
+        body.light-mode { color-scheme: light; }
+        
+        body.dark-mode header { background-color: rgba(0, 40, 50, 0.7); }
+        
+        /* Dark mode cho news card */
+        body.dark-mode .news-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        body.dark-mode .news-title { color: #b0e0c0; }
+        
+        /* Light mode fix */
+        body.light-mode .news-card {
+            background: rgba(255, 255, 255, 0.6); /* Nền trắng mờ rõ hơn chút */
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        /* --- HIỆU ỨNG VIỀN SÁNG ĐỒNG BỘ --- */
+        body.dark-mode .news-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+        }
+        body.light-mode .news-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(100, 100, 100, 0.8);
+            box-shadow: 0 0 20px rgba(100, 100, 100, 0.5);
+        }
+
+
+        .theme-toggle-btn {
+            background: none; border: none; cursor: pointer;
+            font-size: 1.5rem; color: inherit; padding: 0;
+            display: flex; align-items: center;
+        }
+        body.fade-in {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Trang chủ</a></li>
+                <li><a href="menu.html">Thực đơn</a></li>
+                <li class="active">Tin tức</li>
+                <li><a href="feedback.html">Hòm góp ý</a></li>
+                <li style="display: flex; align-items: center;">
+                    <button id="theme-toggle" class="theme-toggle-btn" title="Chuyển đổi chế độ sáng/tối">🌗</button>
+                    <span id="theme-note" style="font-size: 12px; margin-left: 10px; text-transform: none; font-weight: normal; font-style: italic;"></span>
+                </li>                    
+            </ul>
+        </nav>
+    </header>
+
+    <h1 style="text-align: center; margin-top: 40px; font-family: 'Dancing Script', serif; font-size: 3rem;">Tin tức & Sự kiện</h1>
+
+    <div class="news-container">
+        <!-- Bài viết 1 -->
+        <div class="news-card">
+            <img src="./cf_img/cf (1).png" alt="News 1" class="news-img">
+            <div class="news-content">
+                <div class="news-date">04 Tháng 05, 2026</div>
+                <h2 class="news-title">Khai trương không gian "Khu vườn bí mật"</h2>
+                <p class="news-desc">Cafe Plizme chính thức ra mắt không gian ngoài trời mới với phong cách sân vườn châu Âu, mang lại cảm giác thư thái tuyệt đối cho những buổi hẹn hò.</p>
+                <a href="#" class="read-more-btn">Xem chi tiết</a>
+            </div>
+        </div>
+
+        <!-- Bài viết 2 -->
+        <div class="news-card">
+            <img src="./cf_img/cf (2).png" alt="News 2" class="news-img">
+            <div class="news-content">
+                <div class="news-date">04 Tháng 05, 2026</div>
+                <h2 class="news-title">Workshop: Nghệ thuật Latte Art</h2>
+                <p class="news-desc">Tham gia buổi workshop cuối tuần này để tự tay tạo nên những hình vẽ trái tim, thiên nga trên tách cà phê của chính bạn dưới sự hướng dẫn của Barista chuyên nghiệp.</p>
+                <a href="#" class="read-more-btn">Đăng ký ngay</a>
+            </div>
+        </div>
+
+        <!-- Bài viết 3 -->
+        <div class="news-card">
+            <img src="./cf_img/cf (3).jpg" alt="News 3" class="news-img">
+            <div class="news-content">
+                <div class="news-date">04 Tháng 05, 2026</div>
+                <h2 class="news-title">Ra mắt Bộ sưu tập Mùa Hè: "Tropical Vibes"</h2>
+                <p class="news-desc">Đánh tan cái nóng mùa hè với 5 món nước mới sử dụng trái cây nhiệt đới tươi mát. Giảm giá 20% trong tuần lễ ra mắt.</p>
+                <a href="#" class="read-more-btn">Khám phá</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Bản quyền thuộc về ❤️ 𝘢𝘪𝘛𝘩𝘴 &copy; 2026</p>
+        <p>Made with ❤️ 𝘢𝘪𝘛𝘩𝘴</p> 
+    </footer>
+
+    <script>
+        // Script copy từ menu.html
+        const toggleBtn = document.getElementById('theme-toggle');
+        const themeNote = document.getElementById('theme-note');
+        const body = document.body;
+
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        function updateThemeDisplay(isDark) {
+            if (isDark) {
+                toggleBtn.textContent = '☀️';
+                themeNote.textContent = '← Bật nền sáng';
+            } else {
+                toggleBtn.textContent = '🌙';
+                themeNote.textContent = '← Bật nền tối';
+            }
+        }
+
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+            body.classList.add('dark-mode');
+            updateThemeDisplay(true);
+        } else {
+            body.classList.add('light-mode');
+            updateThemeDisplay(false);
+        }   
+
+        toggleBtn.addEventListener('click', () => {
+            const isDark = body.classList.contains('dark-mode');
+            if (isDark) {
+                body.classList.replace('dark-mode', 'light-mode');
+                localStorage.setItem('theme', 'light');
+                updateThemeDisplay(false);
+            } else {
+                body.classList.replace('light-mode', 'dark-mode');
+                localStorage.setItem('theme', 'dark');
+                updateThemeDisplay(true);
+            }
+        });
+
+        // --- HIỆU ỨNG CHUYỂN TRANG MƯỢT MÀ ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('fade-in');
+        });
+
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                if (href && (href.startsWith('/') || href.includes('.html'))) {
+                    e.preventDefault();
+                    document.body.classList.remove('fade-in');
+                    setTimeout(() => { window.location.href = href; }, 100);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

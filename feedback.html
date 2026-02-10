@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hòm góp ý - Cafe Plizme</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Playwrite+IN+Guides&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS GỐC ĐỒNG BỘ --- */
+        :root { color-scheme: light dark; }
+        body {
+            margin: 0; padding: 0;
+            background-color: Canvas; color: CanvasText;
+            font-family: sans-serif;
+            opacity: 0;
+            transition: background-color 0.4s ease, opacity 0.1s ease-in-out;
+        }
+        header {
+            background-color: rgba(165, 220, 236, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 20px 0;
+            position: sticky; top: 0; z-index: 1000;
+        }
+        nav ul { display: flex; justify-content: center; list-style: none; margin: 0; padding: 0; }
+        nav li { 
+            margin: 0 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; 
+            transition: color 0.3s ease; position: relative; 
+        }
+        nav li:hover { color: #6ac5df; }
+        nav li::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -5px; left: 50%; background-color: #6ac5df;
+            transition: all 0.3s ease;
+        }
+        nav li:hover::after, nav li.active::after { width: 100%; left: 0; }
+        nav li.active { color: #6ac5df; }
+        nav li a { text-decoration: none; color: inherit; display: block; }
+
+        /* --- CSS RIÊNG CHO TRANG GÓP Ý --- */
+        .feedback-container {
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 40px;
+            border-radius: 20px;
+            transition: background 0.3s, border 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box; /* Quan trọng để padding không làm vỡ layout */
+            color: CanvasText;
+        }
+
+        .form-input:focus {
+            outline: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            background-color: #6ac5df;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* --- HIỆU ỨNG ĐỒNG BỘ --- */
+        /* Light Mode */
+        body.light-mode .feedback-container {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        body.light-mode .form-input {
+            background-color: rgba(0,0,0,0.05);
+            border-color: rgba(0,0,0,0.15);
+        }
+        body.light-mode .form-input:hover, body.light-mode .submit-btn:hover {
+            border-color: rgba(100, 100, 100, 0.8);
+            box-shadow: 0 0 15px rgba(100, 100, 100, 0.5);
+        }
+        body.light-mode .form-input:focus {
+            border-color: #6ac5df;
+            box-shadow: 0 0 10px #6ac5df;
+        }
+
+        /* Dark Mode */
+        body.dark-mode .feedback-container {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        body.dark-mode .form-input {
+            background-color: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.2);
+        }
+        body.dark-mode .form-input:hover, body.dark-mode .submit-btn:hover {
+            border-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        }
+        body.dark-mode .form-input:focus {
+            border-color: #6ac5df;
+            box-shadow: 0 0 10px #6ac5df;
+        }
+
+        /* --- FOOTER & DARK MODE --- */
+        footer { 
+            background: url('./cf_img/cf.png') no-repeat center center; 
+            background-size: 100% 100%; color: black; text-align: center; 
+            margin-top: 60px; height: 600px; display: flex;
+            flex-direction: column; justify-content: flex-end; padding-bottom: 50px; 
+        }   
+        body.dark-mode { color-scheme: dark; }
+        body.light-mode { color-scheme: light; }
+        body.dark-mode header { background-color: rgba(0, 40, 50, 0.7); }
+        .theme-toggle-btn {
+            background: none; border: none; cursor: pointer;
+            font-size: 1.5rem; color: inherit; padding: 0;
+            display: flex; align-items: center;
+        }
+        body.fade-in {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Trang chủ</a></li>
+                <li><a href="menu.html">Thực đơn</a></li>
+                <li><a href="news.html">Tin tức</a></li>
+                <li class="active">Hòm góp ý</li>
+                <li style="display: flex; align-items: center;">
+                    <button id="theme-toggle" class="theme-toggle-btn" title="Chuyển đổi chế độ sáng/tối">🌗</button>
+                    <span id="theme-note" style="font-size: 12px; margin-left: 10px; text-transform: none; font-weight: normal; font-style: italic;"></span>
+                </li>                    
+            </ul>
+        </nav>
+    </header>
+
+    <h1 style="text-align: center; margin-top: 40px; font-family: 'Dancing Script', serif; font-size: 3rem;">Hòm Góp Ý</h1>
+
+    <div class="feedback-container">
+        <form>
+            <div class="form-group">
+                <label for="name">Tên của bạn (không bắt buộc)</label>
+                <input type="text" id="name" name="name" class="form-input">
+            </div>
+            <div class="form-group">
+                <label for="topic">Chủ đề góp ý</label>
+                <select id="topic" name="topic" class="form-input">
+                    <option>Chất lượng đồ uống</option>
+                    <option>Thái độ phục vụ</option>
+                    <option>Không gian quán</option>
+                    <option>Góp ý khác</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="message">Nội dung góp ý</label>
+                <textarea id="message" name="message" rows="6" class="form-input" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Gửi góp ý</button>
+        </form>
+    </div>
+
+    <footer>
+        <p>Bản quyền thuộc về ❤️ 𝘢𝘪𝘛𝘩𝘴 &copy; 2026</p>
+        <p>Made with ❤️ 𝘢𝘪𝘛𝘩𝘴</p> 
+    </footer>
+
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        const themeNote = document.getElementById('theme-note');
+        const body = document.body;
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        function updateThemeDisplay(isDark) {
+            if (isDark) {
+                toggleBtn.textContent = '☀️';
+                themeNote.textContent = '← Bật nền sáng';
+            } else {
+                toggleBtn.textContent = '🌙';
+                themeNote.textContent = '← Bật nền tối';
+            }
+        }
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+            body.classList.add('dark-mode');
+            updateThemeDisplay(true);
+        } else {
+            body.classList.add('light-mode');
+            updateThemeDisplay(false);
+        }   
+        toggleBtn.addEventListener('click', () => {
+            const isDark = body.classList.contains('dark-mode');
+            if (isDark) {
+                body.classList.replace('dark-mode', 'light-mode');
+                localStorage.setItem('theme', 'light');
+                updateThemeDisplay(false);
+            } else {
+                body.classList.replace('light-mode', 'dark-mode');
+                localStorage.setItem('theme', 'dark');
+                updateThemeDisplay(true);
+            }
+        });
+
+        // --- HIỆU ỨNG CHUYỂN TRANG MƯỢT MÀ ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('fade-in');
+        });
+
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                if (href && (href.startsWith('/') || href.includes('.html'))) {
+                    e.preventDefault();
+                    document.body.classList.remove('fade-in');
+                    setTimeout(() => { window.location.href = href; }, 100);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

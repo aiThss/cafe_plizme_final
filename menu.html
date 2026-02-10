@@ -14,8 +14,9 @@
         body {
             margin: 0; padding: 0;
             background-color: Canvas; color: CanvasText;
-            transition: background-color 0.4s ease;
             font-family: sans-serif;
+            opacity: 0;
+            transition: background-color 0.4s ease, opacity 0.1s ease-in-out;
         }
         header {
             background-color: rgba(165, 220, 236, 0.5);
@@ -25,8 +26,20 @@
             position: sticky; top: 0; z-index: 1000;
         }
         nav ul { display: flex; justify-content: center; list-style: none; margin: 0; padding: 0; }
-        nav li { margin: 0 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.4s; }
-        nav li:hover { transform: translateY(-3px); color: #6ac5df; }
+        nav li { 
+            margin: 0 25px; font-weight: bold; cursor: pointer; text-transform: uppercase; 
+            transition: color 0.3s ease; position: relative; 
+        }
+        nav li:hover { color: #6ac5df; }
+        
+        /* Hiệu ứng gạch chân mở rộng từ giữa */
+        nav li::after {
+            content: ''; position: absolute; width: 0; height: 2px;
+            bottom: -5px; left: 50%; background-color: #6ac5df;
+            transition: all 0.3s ease;
+        }
+        nav li:hover::after, nav li.active::after { width: 100%; left: 0; }
+        nav li.active { color: #6ac5df; }
         
         nav li a { text-decoration: none; color: inherit; display: block; }
         
@@ -53,14 +66,14 @@
         footer { 
             background: url('./cf_img/cf.png') no-repeat center center; 
             background-size: 100% 100%; /* Ép ảnh dãn ra full khung */
-            color: white; 
+            color: black; 
             text-align: center; 
-            padding: 40px 0; 
             margin-top: 60px;
             height: 600px; /* Tăng chiều cao để hiển thị nhiều ảnh hơn */
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-end; /* Đẩy nội dung xuống đáy */
+            padding-bottom: 50px; /* Cách đáy một khoảng */
         }   
 
         /* Thêm đoạn này để màu nền Canvas tự động đổi theo chế độ */
@@ -94,7 +107,15 @@
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 1.5rem; }
+            font-size: 1.5rem; 
+            color: inherit; 
+            padding: 0;
+            display: flex; 
+            align-items: center;
+        }
+        body.fade-in {
+            opacity: 1;
+        }
       </style>
 
 </head>
@@ -103,17 +124,20 @@
     <header>
         <nav>
             <ul>
-                <li><a href="cafe_plizme.html">Trang chủ</a></li>
+                <li><a href="index.html">Trang chủ</a></li>
                 <!--trang hien tai-->
-                <li style="color: #6ac5df; border-bottom: 2px solid #6ac5df;">Thực đơn</li>
-                <li>Tin tức</li>
-                <li>Khuyến mãi</li>
-                <li><button id="theme-toggle" class="theme-toggle-btn" title="Chuyển đổi chế độ sáng/tối">🌗</button></li>                    
+                <li class="active">Thực đơn</li>
+                <li><a href="news.html">Tin tức</a></li>
+                <li><a href="feedback.html">Hòm góp ý</a></li>
+                <li style="display: flex; align-items: center;">
+                    <button id="theme-toggle" class="theme-toggle-btn" title="Chuyển đổi chế độ sáng/tối">🌗</button>
+                    <span id="theme-note" style="font-size: 12px; margin-left: 10px; text-transform: none; font-weight: normal; font-style: italic;"></span>
+                </li>                    
             </ul>
         </nav>
     </header>
 
-    <h1 style="text-align: center; margin-top: 40px; font-family: 'Dancing Script', font-size: 3rem;">Thực đơn hôm nay</h1>
+    <h1 style="text-align: center; margin-top: 40px; font-family: 'Dancing Script', serif; font-size: 3rem;">Thực đơn hôm nay</h1>
     <div class="menu-grid">
         <div class="menu-item glass-panel">
             <img src="./cf_img/cf (1).png" alt="Coffee" class="menu-img">
@@ -151,37 +175,71 @@
             <p>mý</p>
         </div>
         <div class="menu-item glass-panel">
-            <img src="./cf_img/cf (8).jpg" alt="Món mới" class="menu-img">
-            <h3>Món mới</h3>
-            <p></p>
+            <img src="./cf_img/cf (8).jpg" alt="Hồng trà sữa" class="menu-img">
+            <h3>Hồng trà sữa</h3>
+            <p>Ngọt vị môi em 😘</p>
         </div>
     </div>
 
     <footer>
-        <p>Bản quyền thuộc về aiThs &copy; 2026</p> 
-        <p>Bản quyền thuộc về ❤️ 𝘢𝘪𝘛𝘩𝘴 &copy; 2026</p> 
+        <p>Bản quyền thuộc về ❤️ 𝘢𝘪𝘛𝘩𝘴 &copy; 2026</p>
+        <p>Made with ❤️ 𝘢𝘪𝘛𝘩𝘴</p> 
     </footer>
     <script>
         const toggleBtn = document.getElementById('theme-toggle');
+        const themeNote = document.getElementById('theme-note');
         const body = document.body;
 
         // Kiểm tra trạng thái đã lưu hoặc mặc định hệ thống
         const savedTheme = localStorage.getItem('theme');
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
+        function updateThemeDisplay(isDark) {
+            if (isDark) {
+                toggleBtn.textContent = '☀️';
+                themeNote.textContent = '← Bật nền sáng';
+            } else {
+                toggleBtn.textContent = '🌙';
+                themeNote.textContent = '← Bật nền tối';
+            }
+        }
+
         if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
             body.classList.add('dark-mode');
-            toggleBtn.textContent = '☀️';
+            updateThemeDisplay(true);
         } else {
             body.classList.add('light-mode');
-            toggleBtn.textContent = '🌙';
+            updateThemeDisplay(false);
         }   
 
         toggleBtn.addEventListener('click', () => {
             const isDark = body.classList.contains('dark-mode');
-            body.classList.replace(isDark ? 'dark-mode' : 'light-mode', isDark ? 'light-mode' : 'dark-mode');
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
-            toggleBtn.textContent = isDark ? '🌙' : '☀️';
+            if (isDark) {
+                body.classList.replace('dark-mode', 'light-mode');
+                localStorage.setItem('theme', 'light');
+                updateThemeDisplay(false);
+            } else {
+                body.classList.replace('light-mode', 'dark-mode');
+                localStorage.setItem('theme', 'dark');
+                updateThemeDisplay(true);
+            }
+        });
+
+        // --- HIỆU ỨNG CHUYỂN TRANG MƯỢT MÀ ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('fade-in');
+        });
+
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const href = link.getAttribute('href');
+                if (href && (href.startsWith('/') || href.includes('.html'))) {
+                    e.preventDefault();
+                    document.body.classList.remove('fade-in');
+                    setTimeout(() => { window.location.href = href; }, 100);
+                }
+            });
         });
     </script>
 </body>
